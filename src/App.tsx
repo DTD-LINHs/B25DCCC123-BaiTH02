@@ -76,13 +76,8 @@ export default function App() {
           )}
           {state.status === 'success' && (
             <>
-              <CurrentWeather
-                city={state.city}
-                current={state.data.current}
-                today={state.data.daily[0]}
-                unit={unit}
-              />
-              <Forecast daily={state.data.daily} unit={unit} />
+              <CurrentWeather city={state.city} current={state.data.current} unit={unit} />
+              <Forecast daily={state.data.daily} currentTemp={state.data.current.temperature} unit={unit} />
             </>
           )}
         </section>
