@@ -1,0 +1,522 @@
+/* =========================================================
+   1. Biến & reset
+   ========================================================= */
+
+/* Đăng ký kiểu <color> để trình duyệt nội suy được gradient khi đổi theme */
+@property --bg-a {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #5b8def;
+}
+@property --bg-b {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #a5c8ff;
+}
+
+:root {
+  --text: #0f172a;
+  --text-muted: #475569;
+  --panel: rgba(255, 255, 255, 0.82);
+  --panel-border: rgba(255, 255, 255, 0.6);
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --danger: #dc2626;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #5b8def;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   2. Theme nền theo nhóm thời tiết
+   ========================================================= */
+.app {
+  min-height: 100vh;
+  padding: 16px;
+  background: linear-gradient(160deg, var(--bg-a), var(--bg-b));
+  transition:
+    --bg-a 0.8s ease,
+    --bg-b 0.8s ease;
+}
+
+.theme-default { --bg-a: #5b8def; --bg-b: #a5c8ff; }
+.theme-clear   { --bg-a: #f59e0b; --bg-b: #7dd3fc; }
+.theme-cloudy  { --bg-a: #64748b; --bg-b: #cbd5e1; }
+.theme-fog     { --bg-a: #94a3b8; --bg-b: #e2e8f0; }
+.theme-drizzle { --bg-a: #0e7490; --bg-b: #a5f3fc; }
+.theme-rain    { --bg-a: #1e3a8a; --bg-b: #60a5fa; }
+.theme-snow    { --bg-a: #93c5fd; --bg-b: #f8fafc; }
+.theme-storm   { --bg-a: #1e1b4b; --bg-b: #6d28d9; }
+.theme-unknown { --bg-a: #475569; --bg-b: #94a3b8; }
+
+/* =========================================================
+   3. Bố cục
+   ========================================================= */
+.app__header {
+  max-width: 1100px;
+  margin: 0 auto 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app__title {
+  font-size: 1.5rem;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Mobile-first: xếp dọc */
+.app__layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+/* Từ 768px: 2 cột (danh sách | thời tiết) */
+@media (min-width: 768px) {
+  .app {
+    padding: 24px;
+  }
+  .app__layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+    align-items: start;
+  }
+  .sidebar {
+    position: sticky;
+    top: 24px;
+  }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  padding: 16px;
+}
+
+.content {
+  min-height: 320px;
+}
+
+.app__footer {
+  max-width: 1100px;
+  margin: 16px auto 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.app__footer a {
+  color: inherit;
+}
+
+/* =========================================================
+   4. Tìm kiếm & danh sách thành phố
+   ========================================================= */
+.search {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.search__icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.search__input {
+  width: 100%;
+  padding: 10px 12px 10px 34px;
+  font: inherit;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+}
+
+.city-list {
+  display: grid;
+  gap: 6px;
+}
+
+.city-list__empty {
+  padding: 16px 8px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.city-item {
+  display: flex;
+  align-items: stretch;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.city-item:hover {
+  background: #fff;
+}
+
+.city-item--active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.city-item__name {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text);
+  border-radius: 8px;
+}
+
+.city-item--active .city-item__name {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.city-item__fav {
+  padding: 0 12px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #94a3b8;
+  border-radius: 8px;
+  transition: transform 0.15s;
+}
+
+.city-item__fav:hover {
+  transform: scale(1.2);
+}
+
+.city-item__fav--on {
+  color: #f59e0b;
+}
+
+/* =========================================================
+   5. Nút đổi đơn vị & nút chung
+   ========================================================= */
+.unit-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: var(--shadow);
+}
+
+.unit-toggle__btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.unit-toggle__btn--active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+}
+
+/* =========================================================
+   6. Trạng thái: chưa chọn / đang tải / lỗi
+   ========================================================= */
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 280px;
+  text-align: center;
+}
+
+.status__emoji {
+  font-size: 3rem;
+}
+
+.status__title {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.status__text {
+  color: var(--text-muted);
+}
+
+.status--error .status__title {
+  color: var(--danger);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--accent-soft);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.skeleton {
+  width: 100%;
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.skeleton__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 8px;
+}
+
+.skeleton__block {
+  height: 80px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+.skeleton__block--lg {
+  height: 120px;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* =========================================================
+   7. Thời tiết hiện tại
+   ========================================================= */
+.current__city {
+  font-size: 1.6rem;
+}
+
+.current__updated {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.current__main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.current__emoji {
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.current__temp {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.current__desc {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.current__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.stat dt {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.stat dd {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* =========================================================
+   8. Dự báo 7 ngày
+   ========================================================= */
+.forecast {
+  margin-top: 24px;
+}
+
+.forecast__title {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+
+/* Mobile: mỗi ngày 1 hàng ngang */
+.forecast__list {
+  display: grid;
+  gap: 8px;
+}
+
+.forecast-day {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.forecast-day--today {
+  outline: 2px solid var(--accent);
+}
+
+.forecast-day__weekday {
+  font-weight: 600;
+}
+
+.forecast-day__date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.forecast-day__emoji {
+  font-size: 1.6rem;
+}
+
+.forecast-day__temps {
+  display: flex;
+  gap: 8px;
+  min-width: 90px;
+  justify-content: flex-end;
+}
+
+.forecast-day__max {
+  font-weight: 700;
+}
+
+.forecast-day__min {
+  color: var(--text-muted);
+}
+
+/* Màn rộng: 7 ô dạng thẻ */
+@media (min-width: 1024px) {
+  .forecast__list {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+  .forecast-day {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  .forecast-day__weekday {
+    font-size: 0.9rem;
+  }
+  .forecast-day__emoji {
+    font-size: 2rem;
+  }
+  .forecast-day__temps {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
