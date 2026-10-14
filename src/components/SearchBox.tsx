@@ -12,7 +12,8 @@ export function SearchBox({ value, onChange }: SearchBoxProps) {
       <input
         type="search"
         className="search__input"
-        placeholder="Tìm thành phố (vd: da nang, hcm)"
+        placeholder="Tìm thành phố…"
+        title="Gõ không dấu cũng được, vd: da nang, hcm"
         aria-label="Tìm thành phố"
         value={value}
         onChange={(e) => onChange(e.target.value)}

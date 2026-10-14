@@ -36,7 +36,7 @@ export function CityList({ cities, selectedId, favorites, onSelect, onToggleFavo
               title={isFavorite ? 'Bỏ yêu thích' : 'Yêu thích'}
               onClick={() => onToggleFavorite(city.id)}
             >
-              {isFavorite ? '⭐' : '☆'}
+              {isFavorite ? '★' : '☆'}
             </button>
           </li>
         )

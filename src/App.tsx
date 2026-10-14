@@ -40,13 +40,24 @@ export default function App() {
 
   return (
     <div className={`app theme-${theme}`}>
+      {/* Các vòng tròn mờ trang trí phía sau, màu đổi theo thời tiết */}
+      <div className="bg-orbs" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+
       <header className="app__header">
-        <h1 className="app__title">🌦️ Thời tiết Việt Nam</h1>
+        <div>
+          <h1 className="app__title">🌦️ Thời tiết Việt Nam</h1>
+          <p className="app__subtitle">Thời tiết hiện tại và dự báo 7 ngày cho 8 thành phố</p>
+        </div>
         <UnitToggle unit={unit} onChange={setUnit} />
       </header>
 
       <main className="app__layout">
         <aside className="panel sidebar" aria-label="Danh sách thành phố">
+          <h2 className="sidebar__title">Thành phố</h2>
           <SearchBox value={query} onChange={setQuery} />
           <CityList
             cities={visibleCities}
@@ -65,7 +76,12 @@ export default function App() {
           )}
           {state.status === 'success' && (
             <>
-              <CurrentWeather city={state.city} current={state.data.current} unit={unit} />
+              <CurrentWeather
+                city={state.city}
+                current={state.data.current}
+                today={state.data.daily[0]}
+                unit={unit}
+              />
               <Forecast daily={state.data.daily} unit={unit} />
             </>
           )}
