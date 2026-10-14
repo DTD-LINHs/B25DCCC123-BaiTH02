@@ -35,7 +35,8 @@ npm run lint
 
 - Tìm thành phố không phân biệt dấu/hoa thường: `da nang`, `ha noi`, `hanoi`, `hcm`, `sai gon`…; báo khi không có kết quả.
 - Thành phố yêu thích (⭐) lưu `localStorage` (có `try/catch`), hiển thị lên đầu danh sách.
-- Nền gradient đổi theo nhóm thời tiết (quang, mây, sương mù, mưa phùn, mưa, tuyết, dông) với hiệu ứng chuyển mượt (`@property`).
+- Giao diện glassmorphism tông đậm: nền gradient đổi theo nhóm thời tiết (quang, mây, sương mù, mưa, tuyết, dông) kèm các vòng tròn mờ trang trí, chuyển màu mượt bằng `@property`.
+- Dự báo 7 ngày có thanh khoảng nhiệt độ (thấp → cao) vẽ trên cùng thang của cả tuần để thấy xu hướng.
 - Toàn bộ viết bằng TypeScript.
 
 ## Cấu trúc
